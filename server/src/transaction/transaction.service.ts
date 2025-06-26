@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import type { Transaction } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { Injectable } from "@nestjs/common";
+import type { Transaction } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateTransactionDto } from "./dto/create-transaction.dto";
 
 @Injectable()
 export class TransactionService {
@@ -21,7 +21,7 @@ export class TransactionService {
 
   findAll(): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: { date: "desc" },
     });
   }
 

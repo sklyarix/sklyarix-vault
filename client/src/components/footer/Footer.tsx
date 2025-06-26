@@ -1,7 +1,7 @@
 import type { TransactionModel } from '@models/TransactionModel.ts'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import Select from 'react-select/base'
+import Select from 'react-select'
 import { transactionCreate } from '../../services/transaction/transaction.ts'
 import Modal from '../ui/Modal.tsx'
 

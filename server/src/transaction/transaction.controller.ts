@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import type { Transaction } from '@prisma/client';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { TransactionService } from './transaction.service';
+import { Body, Controller, Get, Post } from "@nestjs/common";
+import type { Transaction } from "@prisma/client";
+import { CreateTransactionDto } from "./dto/create-transaction.dto";
+import { TransactionService } from "./transaction.service";
 
-@Controller('transaction')
+@Controller("transaction")
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 

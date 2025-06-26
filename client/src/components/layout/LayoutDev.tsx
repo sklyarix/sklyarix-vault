@@ -1,14 +1,13 @@
 import { Outlet } from 'react-router-dom'
-import { useTg } from '../../hooks/useTg.ts'
+
 import Footer from '../footer/Footer.tsx'
 import Header from '../header/Header.tsx'
 
-const Layout = () => {
-	const {isTg, webApp, user } = useTg();
-	
-	console.log('isTg =', isTg);
-	console.log('webApp =',webApp);
-	console.log('user =',user);
+const LayoutDev = () => {
+	const isTg = true;
+	const webApp = true;
+	const user = { id: 123456789, first_name: "Имя", last_name: "Фамилия", username: "nickname", language_code: "ru" }
+
 	return (
 		<div className="flex flex-col
 		min-h-screen overflow-hidden max-w-lg relative m-auto relative bg-soft-white">
@@ -30,4 +29,4 @@ const Layout = () => {
 	)
 }
 
-export default Layout
+export default LayoutDev

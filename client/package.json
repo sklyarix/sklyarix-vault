@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.8",
+    "@tanstack/react-query-devtools": "^5.81.2",
+    "@types/telegram-web-app": "^7.10.1",
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
     "postcss": "^8.5.4",
