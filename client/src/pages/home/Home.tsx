@@ -2,7 +2,7 @@ import TransactionList from "../../components/transaction/TransactionList.tsx";
 import TransactionSumMonth from "../../components/transaction/TransactionSumMonth.tsx";
 
 const Home = () => {
-  console.log("API URL:", import.meta.env.VITE_API_URL;);
+  console.log("API URL:", import.meta.env.VITE_API_URL);
 
   return (
     <>
