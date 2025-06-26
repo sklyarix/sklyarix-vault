@@ -8,7 +8,7 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   ); // Без этого class-validator не будет работать:
   app.enableCors({
-    origin: "https://cute-monkeys-play.loca.lt",
+    origin: "*",
   });
 
   app.use((req, res, next) => {
