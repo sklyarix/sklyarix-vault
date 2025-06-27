@@ -1,23 +1,59 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import type { Transaction } from "@prisma/client";
-import { CreateTransactionDto } from "./dto/create-transaction.dto";
-import { TransactionService } from "./transaction.service";
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Get,
+	Post,
+	Query
+} from '@nestjs/common'
+import type { Transaction } from '@prisma/client'
+import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { TransactionService } from './transaction.service'
 
-@Controller("transaction")
+@Controller('transaction')
 export class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+	constructor(private readonly transactionService: TransactionService) {}
 
-  @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionService.create(createTransactionDto);
-  }
+	@Post()
+	create(@Body() createTransactionDto: CreateTransactionDto) {
+		return this.transactionService.create(createTransactionDto)
+	}
 
-  @Get()
-  findAll(): Promise<Transaction[]> {
-    return this.transactionService.findAll();
-  }
+	// @desc Get all transactions (optionally sorted)
+	// @route GET /transaction?sortBy=field&order=asc|desc
+	@Get()
+	findAll(
+		@Query('sortBy') sortBy?: string,
+		@Query('order') order?: 'asc' | 'desc'
+	): Promise<Transaction[]> {
+		return this.transactionService.findAll(sortBy, order)
+	}
 
-  /*
+	// @desc Get all transactions by range date
+	// @route GET /transaction?month=01&year=2025
+	@Get('date')
+	findByDateRange(
+		@Query('month') month: string,
+		@Query('year') year: string
+	): Promise<Transaction[]> {
+		const monthNum = Number(month)
+		const yearNum = Number(year)
+
+		if (isNaN(monthNum) || isNaN(yearNum)) {
+			throw new BadRequestException('Year or month must be numbers - 1')
+		}
+
+		if (monthNum < 1 || monthNum > 12) {
+			throw new BadRequestException('Month must be numbers')
+		}
+
+		const from = new Date(yearNum, monthNum - 1)
+		const to = new Date(yearNum, monthNum)
+
+		return this.transactionService.findByDateRange(from, to)
+	}
+
+	/*
  
 
 @Get()

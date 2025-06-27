@@ -7,8 +7,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
 	plugins: [react(), tailwindcss()],
 	server: {
-    allowedHosts: true
-  },
+		allowedHosts: true
+	},
 	resolve: {
 		alias: {
 			'@models': path.resolve(__dirname, '../shared/models')

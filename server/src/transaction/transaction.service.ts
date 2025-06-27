@@ -1,31 +1,42 @@
-import { Injectable } from "@nestjs/common";
-import type { Transaction } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateTransactionDto } from "./dto/create-transaction.dto";
+import { Injectable } from '@nestjs/common'
+import type { Transaction } from '@prisma/client'
+import { PrismaService } from '../prisma/prisma.service'
+import { CreateTransactionDto } from './dto/create-transaction.dto'
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly prisma: PrismaService) {}
+	constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateTransactionDto) {
-    return this.prisma.transaction.create({
-      data: {
-        type: dto.type,
-        amount: dto.amount,
-        date: new Date(dto.date),
-        comment: dto.comment,
-        categoryId: dto.categoryId ?? null,
-      },
-    });
-  }
+	create(dto: CreateTransactionDto) {
+		return this.prisma.transaction.create({
+			data: {
+				type: dto.type,
+				amount: dto.amount,
+				date: new Date(dto.date),
+				comment: dto.comment,
+				categoryId: dto.categoryId ?? null
+			}
+		})
+	}
 
-  findAll(): Promise<Transaction[]> {
-    return this.prisma.transaction.findMany({
-      orderBy: { date: "desc" },
-    });
-  }
+	findAll(sortBy?: string, order?: 'asc' | 'desc'): Promise<Transaction[]> {
+		return this.prisma.transaction.findMany({
+			orderBy: sortBy ? { [sortBy]: order } : undefined
+		})
+	}
 
-  /*
+	findByDateRange(from: Date, to: Date): Promise<Transaction[]> {
+		return this.prisma.transaction.findMany({
+			where: {
+				date: {
+					gte: from,
+					lt: to
+				}
+			}
+		})
+	}
+
+	/*
 	async findAll(sortBy?: string, order: 'asc' | 'desc' = 'asc'): Promise<Transaction[]> {
 	const validSortFields = ['date', 'amount', 'createdAt']; // защита от SQL-инъекций
 
