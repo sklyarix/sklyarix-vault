@@ -17,7 +17,7 @@ export const transactionCreate = async (
 
 export const transactionGetAll = async () => {
 	try {
-		const { data } = await instance.get(`${URL}/date?sortBy=date&order=desc`)
+		const { data } = await instance.get(`${URL}?sortBy=date&order=desc`)
 		return data
 	} catch (error) {
 		console.log('error =', error)
