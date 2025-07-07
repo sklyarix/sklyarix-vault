@@ -1,11 +1,17 @@
-import type { TransactionModel } from '@models/TransactionModel.ts'
-
 import { instance } from '../api.ts'
 
 const URL = '/transaction'
 
+export interface CreateDataTransaction {
+	type: 'INCOME' | 'EXPENSE'
+	amount: number
+	date: string
+	comment?: string
+	categoryId?: number
+}
+
 export const transactionCreate = async (
-	createDataTransaction: TransactionModel
+	createDataTransaction: CreateDataTransaction
 ) => {
 	try {
 		const { data } = await instance.post(URL, createDataTransaction)

@@ -17,19 +17,3 @@ export const groupByDate = (transactions: TransactionModel[]) => {
 		transactions: transaction
 	}))
 }
-/*
-
-transaction[]
-[
-
-]
-
-
-	[
-		{
-			date: string,
-			transactions: transaction[]
-		},
-	]
-
- */

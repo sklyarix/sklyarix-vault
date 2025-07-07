@@ -11,7 +11,8 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'@models': path.resolve(__dirname, '../shared/models')
+			'@models': path.resolve(__dirname, '../shared/models'),
+			'@const': path.resolve(__dirname, '../shared/const')
 		},
 		extensions: ['.ts', '.tsx']
 	}

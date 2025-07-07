@@ -1,18 +1,32 @@
 import type { TransactionModel } from '@models/TransactionModel.ts'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Select from 'react-select'
+import { useAlerts } from '../../hooks/useAlerts.ts'
 import { transactionCreate } from '../../services/transaction/transaction.ts'
+import Alert from '../ui/Alert.tsx'
 import Modal from '../ui/Modal.tsx'
 
+type FormValues = {
+	amount: number
+	date: string
+	type: 'INCOME' | 'EXPENSE'
+	comment?: string
+	categoryId?: number
+}
+
 const Footer = () => {
-	const [isShow, setShow] = useState<boolean>(false)
+	const { alerts, addAlert } = useAlerts()
+	const queryClient = useQueryClient()
+
+	const [isShowModal, setShowModal] = useState<boolean>(false)
 
 	const handleClick = () => {
-		setShow(!isShow)
+		setShowModal(!isShowModal)
 	}
 
-	const { control, register, handleSubmit } = useForm<TransactionModel>()
+	const { control, register, handleSubmit, reset } = useForm<TransactionModel>()
 
 	const optionsTypeTransaction = [
 		{ value: 'INCOME', label: 'Доход' },
@@ -23,6 +37,32 @@ const Footer = () => {
 		{ value: 1, label: 'Продукты' },
 		{ value: 2, label: 'Транспорт' }
 	]
+	const sendForm = async (formData: FormValues) => {
+		try {
+			const transaction = await transactionCreate(formData)
+
+			if (transaction) {
+				addAlert('success')
+				setShowModal(false)
+				reset()
+				await queryClient.invalidateQueries({ queryKey: ['transactions'] })
+				const currentData = new Date()
+				await queryClient.invalidateQueries({
+					queryKey: [
+						'transactions-by-month',
+						currentData.getMonth() + 1,
+						currentData.getFullYear()
+					]
+				})
+			} else {
+				addAlert('error')
+			}
+		} catch (error) {
+			console.error('Ошибка:', error)
+			addAlert('error')
+		}
+	}
+
 	return (
 		<div>
 			<footer className='absolute right-0 left-0 container bottom-0 bg-white'>
@@ -47,9 +87,9 @@ const Footer = () => {
 					</div>
 				</nav>
 			</footer>
-			<Modal isOpen={isShow} onClose={handleClick}>
+			<Modal isOpen={isShowModal} onClose={handleClick}>
 				<div className='content'>
-					<form onSubmit={handleSubmit(transactionCreate)}>
+					<form onSubmit={handleSubmit(sendForm)}>
 						<div className='mb-4'>
 							<label
 								htmlFor='type'
@@ -155,6 +195,11 @@ const Footer = () => {
 					</form>
 				</div>
 			</Modal>
+			<div className='fixed top-4 left-1/2 transform -translate-x-1/2 z-50 space-y-2'>
+				{alerts.map(alert => (
+					<Alert key={alert.id} type={alert.type} />
+				))}
+			</div>
 		</div>
 	)
 }
