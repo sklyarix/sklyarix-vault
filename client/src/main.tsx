@@ -5,13 +5,13 @@ import { createRoot } from 'react-dom/client'
 import './assets/styles/main.css'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Layout from './components/layout/Layout.tsx'
+import LayoutDev from './components/layout/LayoutDev.tsx'
 import Home from './pages/home/Home.tsx'
 
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Layout />,
+		element: <LayoutDev />,
 		children: [
 			{
 				index: true,
