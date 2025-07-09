@@ -1,9 +1,12 @@
+import type { CategoryModel } from '@models/CategoryModel.ts'
 import type { TransactionModel } from '@models/TransactionModel.ts'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { NavLink, useLocation } from 'react-router-dom'
 import Select from 'react-select'
 import { useAlerts } from '../../hooks/useAlerts.ts'
+import { useCategoryGetAll } from '../../hooks/useCategoryGetAll.ts'
 import { transactionCreate } from '../../services/transaction/transaction.ts'
 import Alert from '../ui/Alert.tsx'
 import Modal from '../ui/Modal.tsx'
@@ -17,8 +20,10 @@ type FormValues = {
 }
 
 const Footer = () => {
+	const location = useLocation()
 	const { alerts, addAlert } = useAlerts()
 	const queryClient = useQueryClient()
+	const { data: categoryList } = useCategoryGetAll()
 
 	const [isShowModal, setShowModal] = useState<boolean>(false)
 
@@ -33,10 +38,12 @@ const Footer = () => {
 		{ value: 'EXPENSE', label: 'Расход' }
 	]
 
-	const optionsCategoryTransaction = [
-		{ value: 1, label: 'Продукты' },
-		{ value: 2, label: 'Транспорт' }
-	]
+	const optionsCategoryTransaction =
+		categoryList?.map(({ id, name }: CategoryModel) => ({
+			value: id,
+			label: name
+		})) || []
+
 	const sendForm = async (formData: FormValues) => {
 		try {
 			const transaction = await transactionCreate(formData)
@@ -67,24 +74,40 @@ const Footer = () => {
 		<div>
 			<footer className='absolute right-0 left-0 container bottom-0 bg-white'>
 				<nav className='flex justify-between items-center'>
-					<div className='h-10 w-10 bg-purple-100 flex items-center justify-center rounded-full'>
+					<NavLink
+						to='/'
+						end
+						className={`h-10 w-10 flex items-center justify-center rounded-full ${location.pathname == '/' ? 'bg-purple-100' : ''}`}
+					>
 						<span className='text-2xl'>🏠</span>
-					</div>
-					<div className='h-10 w-10  flex items-center justify-center rounded-full'>
+					</NavLink>
+					<NavLink
+						to='/statistics'
+						end
+						className={`h-10 w-10 flex items-center justify-center rounded-full ${location.pathname == '/statistics' ? 'bg-purple-100' : ''}`}
+					>
 						<span className='text-2xl'>📊</span>
-					</div>
+					</NavLink>
 					<button
 						className='h-12 w-12 bg-purple-main flex items-center justify-center rounded-full'
 						onClick={handleClick}
 					>
 						<span className='text-4xl'>🫰</span>
 					</button>
-					<div className='h-10 w-10 flex items-center justify-center rounded-full'>
+					<NavLink
+						to='/calendar'
+						end
+						className={`h-10 w-10 flex items-center justify-center rounded-full ${location.pathname == '/calendar' ? 'bg-purple-100' : ''}`}
+					>
 						<span className='text-2xl'>🗓️</span>
-					</div>
-					<div className='h-10 w-10 flex items-center justify-center rounded-full'>
+					</NavLink>
+					<NavLink
+						to='/settings'
+						end
+						className={`h-10 w-10 flex items-center justify-center rounded-full ${location.pathname == '/settings' ? 'bg-purple-100' : ''}`}
+					>
 						<span className='text-2xl'>⚙️</span>
-					</div>
+					</NavLink>
 				</nav>
 			</footer>
 			<Modal isOpen={isShowModal} onClose={handleClick}>

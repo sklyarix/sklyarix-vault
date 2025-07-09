@@ -19,6 +19,10 @@ export class TransactionService {
 		})
 	}
 
+	remove(id: number) {
+		return this.prisma.transaction.delete({ where: { id } })
+	}
+
 	findAll(sortBy?: string, order?: 'asc' | 'desc'): Promise<Transaction[]> {
 		return this.prisma.transaction.findMany({
 			orderBy: sortBy ? { [sortBy]: order } : undefined

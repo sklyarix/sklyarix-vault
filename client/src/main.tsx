@@ -5,23 +5,57 @@ import { createRoot } from 'react-dom/client'
 import './assets/styles/main.css'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import LayoutDev from './components/layout/LayoutDev.tsx'
+import Layout from './components/layout/Layout.tsx'
 import Home from './pages/home/Home.tsx'
+import InDevelopmentPage from './pages/InDevelopment.tsx'
+import SettingsPage from './pages/settings/Settings.tsx'
 
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <LayoutDev />,
+		element: <Layout />,
 		children: [
 			{
 				index: true,
 				element: <Home />
 			}
 		]
+	},
+	{
+		path: '/statistics',
+		element: <Layout />,
+		children: [
+			{
+				index: true,
+				element: <InDevelopmentPage />
+			}
+		]
+	},
+	{
+		path: '/calendar',
+		element: <Layout />,
+		children: [
+			{
+				index: true,
+				element: <InDevelopmentPage />
+			}
+		]
+	},
+	{
+		path: '/settings',
+		element: <Layout />,
+		children: [
+			{
+				index: true,
+				element: <SettingsPage />
+			}
+		]
 	}
 ])
 
 const queryClient = new QueryClient()
+
+console.log(import.meta.env.VITE_API_URL)
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>

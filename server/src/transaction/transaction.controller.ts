@@ -2,7 +2,9 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Delete,
 	Get,
+	Param,
 	Post,
 	Query
 } from '@nestjs/common'
@@ -17,6 +19,11 @@ export class TransactionController {
 	@Post()
 	create(@Body() createTransactionDto: CreateTransactionDto) {
 		return this.transactionService.create(createTransactionDto)
+	}
+
+	@Delete(':id')
+	remove(@Param('id') id: string) {
+		return this.transactionService.remove(+id)
 	}
 
 	// @desc Get all transactions (optionally sorted)
@@ -79,9 +86,6 @@ findAll(
 			return this.transactionService.update(+id, updateTransactionDto);
 		}
 	
-		@Delete(':id')
-		remove(@Param('id') id: string) {
-			return this.transactionService.remove(+id);
-		}
+		
 	 */
 }

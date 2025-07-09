@@ -21,6 +21,15 @@ export const transactionCreate = async (
 	}
 }
 
+export const transactionDelete = async (id: number) => {
+	try {
+		const { data } = await instance.delete(`${URL}/${id}`)
+		return data
+	} catch (error) {
+		console.log('error =', error)
+	}
+}
+
 export const transactionGetAll = async () => {
 	try {
 		const { data } = await instance.get(`${URL}?sortBy=date&order=desc`)
