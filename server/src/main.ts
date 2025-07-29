@@ -1,33 +1,35 @@
-import { ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { AppModule } from './app.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  ); // Без этого class-validator не будет работать:
-  app.enableCors({
-    origin: "*",
-  });
+	const app = await NestFactory.create(AppModule)
 
-  app.use((req, res, next) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("🔍 Method:", req.method);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("🔍 URL:", req.url);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("🔍 Origin:", req.headers.origin);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("🔍 Referer:", req.headers.referer);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("🔍 User-Agent:", req.headers["user-agent"]);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    next();
-  });
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true
+		})
+	) // Без этого class-validator не будет работать:
 
-  await app.listen(process.env.PORT ?? 3000);
+	app.enableCors({
+		origin: '*'
+	})
+
+	// Swagger
+	const config = new DocumentBuilder()
+		.setTitle('Sklyarix Vault')
+		.setDescription('API для управления транзакциями и личными финансами')
+		.setVersion('1.0')
+		.addTag('Транзакции')
+		.addTag('Категории')
+		.build()
+	const documentFactory = () => SwaggerModule.createDocument(app, config)
+	SwaggerModule.setup('api', app, documentFactory)
+
+	await app.listen(process.env.PORT ?? 3000)
 }
 
-bootstrap();
-//// origin: "https://3325-77-238-254-115.ngrok-free.app", // твой фронтенд (Vite)
+bootstrap()

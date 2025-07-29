@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common'
-import type { Transaction } from '@prisma/client'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { plainToInstance } from 'class-transformer'
 import { PrismaService } from '../prisma/prisma.service'
-import { CreateTransactionDto } from './dto/create-transaction.dto'
+import type { CreateTransactionDto } from './dto/create-transaction.dto'
+import { TransactionDto } from './dto/transaction.dto'
 
 @Injectable()
 export class TransactionService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	create(dto: CreateTransactionDto) {
-		return this.prisma.transaction.create({
+	/* ------------------------------------------------ */
+	async create(dto: CreateTransactionDto) {
+		const transaction = await this.prisma.transaction.create({
 			data: {
 				type: dto.type,
 				amount: dto.amount,
@@ -17,20 +19,29 @@ export class TransactionService {
 				categoryId: dto.categoryId ?? null
 			}
 		})
+		return plainToInstance(TransactionDto, transaction)
 	}
 
-	remove(id: number) {
-		return this.prisma.transaction.delete({ where: { id } })
+	/* ------------------------------------------------ */
+	async remove(id: number) {
+		const existing = await this.prisma.transaction.findUnique({ where: { id } })
+		if (!existing) throw new NotFoundException()
+		const transaction = await this.prisma.transaction.delete({ where: { id } })
+		return plainToInstance(TransactionDto, transaction)
 	}
 
-	findAll(sortBy?: string, order?: 'asc' | 'desc'): Promise<Transaction[]> {
-		return this.prisma.transaction.findMany({
-			orderBy: sortBy ? { [sortBy]: order } : undefined
+	/* ------------------------------------------------ */
+	async findAll(sortBy?: string, order: 'asc' | 'desc' = 'desc') {
+		const allowedFields = ['amount', 'date', 'createdAt']
+		const isValid = sortBy && allowedFields.includes(sortBy)
+		const transactions = await this.prisma.transaction.findMany({
+			orderBy: isValid ? { [sortBy]: order } : undefined
 		})
+		return plainToInstance(TransactionDto, transactions)
 	}
 
-	findByDateRange(from: Date, to: Date): Promise<Transaction[]> {
-		return this.prisma.transaction.findMany({
+	async findByDateRange(from: Date, to: Date) {
+		const transactions = await this.prisma.transaction.findMany({
 			where: {
 				date: {
 					gte: from,
@@ -38,32 +49,11 @@ export class TransactionService {
 				}
 			}
 		})
+		return plainToInstance(TransactionDto, transactions)
 	}
 
 	/*
-	async findAll(sortBy?: string, order: 'asc' | 'desc' = 'asc'): Promise<Transaction[]> {
-	const validSortFields = ['date', 'amount', 'createdAt']; // защита от SQL-инъекций
-
-	return this.prisma.transaction.findMany({
-		orderBy: sortBy && validSortFields.includes(sortBy)
-			? { [sortBy]: order }
-			: undefined,
-	});
-}
-
 	
 	
-		findOne(id: number) {
-			return `This action returns a #${id} transaction`;
-		}
-	
-		update(id: number, updateTransactionDto: UpdateTransactionDto) {
-			return `This action updates a #${id} transaction`;
-		}
-	
-		remove(id: number) {
-			return this.prisma.transaction.delete({ where: { id } });
-		}
-		
-	 */
+ */
 }

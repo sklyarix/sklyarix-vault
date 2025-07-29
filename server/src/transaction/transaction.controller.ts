@@ -8,50 +8,119 @@ import {
 	Post,
 	Query
 } from '@nestjs/common'
-import type { Transaction } from '@prisma/client'
+import {
+	ApiBody,
+	ApiCreatedResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiQuery,
+	ApiResponse,
+	ApiTags
+} from '@nestjs/swagger'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
+import { TransactionDto } from './dto/transaction.dto'
 import { TransactionService } from './transaction.service'
 
-@Controller('transaction')
+@ApiTags('Транзакции')
+@Controller('transactions')
 export class TransactionController {
 	constructor(private readonly transactionService: TransactionService) {}
 
+	/* ------------------------------------------------ */
 	@Post()
-	create(@Body() createTransactionDto: CreateTransactionDto) {
-		return this.transactionService.create(createTransactionDto)
+	@ApiOperation({ summary: 'Создать транзакцию' })
+	@ApiBody({ type: CreateTransactionDto })
+	@ApiCreatedResponse({
+		description: 'Транзакция успешно создана',
+		type: TransactionDto
+	})
+	@ApiResponse({ status: 400, description: 'Ошибка валидации' })
+	create(@Body() dto: CreateTransactionDto) {
+		return this.transactionService.create(dto)
 	}
 
+	/* ------------------------------------------------ */
 	@Delete(':id')
+	@ApiOperation({ summary: 'Удалить транзакцию' })
+	@ApiOkResponse({
+		description: 'Транзакция успешно удалена',
+		type: TransactionDto
+	})
+	@ApiNotFoundResponse({
+		description: 'Транзакция не найдена'
+	})
 	remove(@Param('id') id: string) {
 		return this.transactionService.remove(+id)
 	}
 
-	// @desc Get all transactions (optionally sorted)
-	// @route GET /transaction?sortBy=field&order=asc|desc
+	/* ------------------------------------------------ */
 	@Get()
+	@ApiOperation({ summary: 'Получить список транзакций' })
+	@ApiQuery({
+		name: 'sortBy',
+		required: false,
+		description: 'Поле сортировки (допустимые: amount, date, createdAt)',
+		schema: {
+			type: 'string',
+			enum: ['amount', 'date', 'createdAt'],
+			default: 'date'
+		}
+	})
+	@ApiQuery({
+		name: 'order',
+		required: false,
+		enum: ['asc', 'desc'],
+		description: 'Направление сортировки',
+		schema: {
+			type: 'string',
+			default: 'desc'
+		}
+	})
+	@ApiOkResponse({
+		description: 'Список транзакций',
+		type: TransactionDto,
+		isArray: true
+	})
 	findAll(
 		@Query('sortBy') sortBy?: string,
 		@Query('order') order?: 'asc' | 'desc'
-	): Promise<Transaction[]> {
+	) {
 		return this.transactionService.findAll(sortBy, order)
 	}
 
-	// @desc Get all transactions by range date
-	// @route GET /transaction?month=01&year=2025
+	/* ------------------------------------------------ */
 	@Get('date')
-	findByDateRange(
-		@Query('month') month: string,
-		@Query('year') year: string
-	): Promise<Transaction[]> {
+	@ApiOperation({ summary: 'Получить транзакции за месяц/год' })
+	@ApiQuery({
+		name: 'month',
+		required: true,
+		type: Number,
+		example: '7',
+		description: 'Номер месяца от 1 до 12'
+	})
+	@ApiQuery({
+		name: 'year',
+		required: true,
+		type: Number,
+		example: '2025',
+		description: 'Год, например 2025'
+	})
+	@ApiOkResponse({
+		description: 'Список транзакций за указанный месяц',
+		type: TransactionDto,
+		isArray: true
+	})
+	findByDateRange(@Query('month') month: string, @Query('year') year: string) {
 		const monthNum = Number(month)
 		const yearNum = Number(year)
 
 		if (isNaN(monthNum) || isNaN(yearNum)) {
-			throw new BadRequestException('Year or month must be numbers - 1')
+			throw new BadRequestException('Year or month must be numbers ')
 		}
 
 		if (monthNum < 1 || monthNum > 12) {
-			throw new BadRequestException('Month must be numbers')
+			throw new BadRequestException('Month must be between 1 and 12')
 		}
 
 		const from = new Date(yearNum, monthNum - 1)
@@ -61,31 +130,10 @@ export class TransactionController {
 	}
 
 	/*
- 
-
-@Get()
-findAll(
-	@Query('sortBy') sortBy?: string,
-	@Query('order') order?: 'asc' | 'desc'
-): Promise<Transaction[]> {
-	return this.transactionService.findAll(sortBy, order);
-}
- 
+	@Put('update/:id')
+	update(@Param('id') id: string, @Body() dto: UpdateTransactionDto) {
+		return this.transactionService.update(+id, dto)
+	}
 	
-	
-		@Get(':id')
-		findOne(@Param('id') id: string) {
-			return this.transactionService.findOne(+id);
-		}
-	
-		@Patch(':id')
-		update(
-			@Param('id') id: string,
-			@Body() updateTransactionDto: UpdateTransactionDto,
-		) {
-			return this.transactionService.update(+id, updateTransactionDto);
-		}
-	
-		
 	 */
 }

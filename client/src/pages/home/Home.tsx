@@ -1,11 +1,11 @@
+import TotalExpensesMonth from '../../components/transaction/TotalExpensesMonth.tsx'
 import TransactionList from '../../components/transaction/TransactionList.tsx'
-import TransactionSum from '../../components/transaction/TransactionSum.tsx'
 
 const Home = () => {
 	return (
 		<>
 			<div className='mb-4'>
-				<TransactionSum />
+				<TotalExpensesMonth />
 			</div>
 			<TransactionList />
 		</>

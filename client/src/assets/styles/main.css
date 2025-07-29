@@ -23,6 +23,10 @@ html{
   @apply p-4;
 }
 
+button{
+  cursor: pointer;
+}
+
 /*
 @theme {
   --font-ttruns: TT Runs Trial, 'sans-serif';

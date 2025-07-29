@@ -7,18 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TransactionType {
-  INCOME
-  EXPENSE
-}
-
 model Transaction {
-  id         Int             @id @default(autoincrement())
-  createdAt  DateTime        @default(now()) @map("created_at")
-  updatedAt  DateTime        @updatedAt @map("updated_at")
-  type       TransactionType
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  type       String
   amount     Float
-  category   Category?       @relation(fields: [categoryId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id])
   categoryId Int?
   date       DateTime
   comment    String?

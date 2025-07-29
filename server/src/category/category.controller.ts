@@ -1,25 +1,59 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import {
+	ApiBody,
+	ApiCreatedResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiResponse
+} from '@nestjs/swagger'
+
+import { CategoryService } from './category.service'
+import { CategoryDto } from './dto/category.dto'
+import { CreateCategoryDto } from './dto/create-category.dto'
 
 @Controller('category')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+	constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
-  }
+	/* ------------------------------------------------ */
+	@Post()
+	@ApiOperation({ summary: 'Создать категорию' })
+	@ApiBody({ type: CreateCategoryDto })
+	@ApiCreatedResponse({
+		description: 'Категория успешно создана',
+		type: CategoryDto
+	})
+	@ApiResponse({ status: 400, description: 'Ошибка валидации' })
+	create(@Body() dto: CreateCategoryDto) {
+		return this.categoryService.create(dto)
+	}
 
-  @Get()
-  findAll() {
-    return this.categoryService.findAll();
-  }
+	/* ------------------------------------------------ */
+	@Get()
+	@ApiOperation({ summary: 'Получить все категории' })
+	@ApiOkResponse({
+		description: 'Список категорий',
+		type: CategoryDto,
+		isArray: true
+	})
+	findAll() {
+		return this.categoryService.findAll()
+	}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
-  }
+	/* ------------------------------------------------ */
+	@Get(':id')
+	@ApiOperation({ summary: 'Получить категорию' })
+	@ApiOkResponse({
+		description: 'Категория',
+		type: CategoryDto
+	})
+	@ApiNotFoundResponse({
+		description: 'Категория не найдена'
+	})
+	findOne(@Param('id') id: string) {
+		return this.categoryService.findOne(+id)
+	}
 }
 
 /*

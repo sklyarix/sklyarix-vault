@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "lt": "lt --port 5173 --subdomain sklyarix-bot-vault",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -23,7 +24,8 @@
     "react-hook-form": "^7.56.4",
     "react-router-dom": "^7.6.1",
     "react-select": "^5.10.1",
-    "tailwindcss": "^4.1.8"
+    "tailwindcss": "^4.1.8",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
