@@ -6,6 +6,7 @@ import {
 	Get,
 	Param,
 	Post,
+	Put,
 	Query
 } from '@nestjs/common'
 import {
@@ -20,6 +21,7 @@ import {
 } from '@nestjs/swagger'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { TransactionDto } from './dto/transaction.dto'
+import { UpdateTransactionDto } from './dto/update-transaction.dto'
 import { TransactionService } from './transaction.service'
 
 @ApiTags('Транзакции')
@@ -41,6 +43,19 @@ export class TransactionController {
 	}
 
 	/* ------------------------------------------------ */
+	@Put(':id')
+	@ApiOperation({ summary: 'Изменить транзакцию' })
+	@ApiBody({ type: UpdateTransactionDto })
+	@ApiOkResponse({
+		description: 'Итоговый вид транзакции после изменений',
+		type: TransactionDto
+	})
+	@ApiNotFoundResponse({ description: 'Транзакция не найдена' })
+	update(@Param('id') id: string, @Body() dto: UpdateTransactionDto) {
+		return this.transactionService.update(+id, dto)
+	}
+
+	/* ------------------------------------------------ */
 	@Delete(':id')
 	@ApiOperation({ summary: 'Удалить транзакцию' })
 	@ApiOkResponse({
@@ -48,7 +63,7 @@ export class TransactionController {
 		type: TransactionDto
 	})
 	@ApiNotFoundResponse({
-		description: 'Транзакция не найдена'
+		description: 'Транзакция с таким ID не найдена'
 	})
 	remove(@Param('id') id: string) {
 		return this.transactionService.remove(+id)
@@ -128,12 +143,4 @@ export class TransactionController {
 
 		return this.transactionService.findByDateRange(from, to)
 	}
-
-	/*
-	@Put('update/:id')
-	update(@Param('id') id: string, @Body() dto: UpdateTransactionDto) {
-		return this.transactionService.update(+id, dto)
-	}
-	
-	 */
 }

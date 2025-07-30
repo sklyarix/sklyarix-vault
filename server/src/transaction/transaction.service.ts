@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { PrismaService } from '../prisma/prisma.service'
 import type { CreateTransactionDto } from './dto/create-transaction.dto'
 import { TransactionDto } from './dto/transaction.dto'
+import type { UpdateTransactionDto } from './dto/update-transaction.dto'
 
 @Injectable()
 export class TransactionService {
@@ -40,6 +41,7 @@ export class TransactionService {
 		return plainToInstance(TransactionDto, transactions)
 	}
 
+	/* ------------------------------------------------ */
 	async findByDateRange(from: Date, to: Date) {
 		const transactions = await this.prisma.transaction.findMany({
 			where: {
@@ -52,8 +54,17 @@ export class TransactionService {
 		return plainToInstance(TransactionDto, transactions)
 	}
 
-	/*
-	
-	
- */
+	/* ------------------------------------------------ */
+	async update(id: number, dto: UpdateTransactionDto) {
+		const existing = await this.prisma.transaction.findUnique({ where: { id } })
+		if (!existing)
+			throw new NotFoundException(`Транзакция с id ${id} не найдена`)
+
+		const transaction = await this.prisma.transaction.update({
+			where: { id },
+			data: { ...dto }
+		})
+
+		return plainToInstance(TransactionDto, transaction)
+	}
 }
