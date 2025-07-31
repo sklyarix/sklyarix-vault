@@ -1,19 +1,16 @@
+import type {
+	CreateDataTransaction,
+	TransactionModelUpdate
+} from '@models/TransactionModel.ts'
 import { instance } from '../api.ts'
 
-const URL = '/transaction'
-
-export interface CreateDataTransaction {
-	type: 'INCOME' | 'EXPENSE'
-	amount: number
-	date: string
-	comment?: string
-	categoryId?: number
-}
+const URL = '/transactions'
 
 export const transactionCreate = async (
 	createDataTransaction: CreateDataTransaction
 ) => {
 	try {
+		console.log(createDataTransaction)
 		const { data } = await instance.post(URL, createDataTransaction)
 		return data
 	} catch (error) {
@@ -49,3 +46,5 @@ export const transactionByDateRange = async (month: number, year: number) => {
 		console.log('error =', error)
 	}
 }
+
+export const transactionUpdate = async (data: TransactionModelUpdate) => {}

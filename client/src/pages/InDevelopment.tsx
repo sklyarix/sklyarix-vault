@@ -1,6 +1,6 @@
 const InDevelopmentPage = () => {
 	return (
-		<div className='mb-4'>
+		<div className='relative mb-4 ml-auto px-2.5'>
 			<h1>Страница в разработке</h1>
 		</div>
 	)

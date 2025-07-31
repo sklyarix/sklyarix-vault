@@ -22,7 +22,7 @@ const TransactionDayBlock = ({
 
 	const categoryMap = new Map<number, string>()
 
-	const openModal = useModalStore(state => state.openModal)
+	const { openModal, closeModal } = useModalStore()
 
 	categories?.forEach(({ id, name }: CategoryModel) => {
 		categoryMap.set(id, name)
@@ -45,10 +45,20 @@ const TransactionDayBlock = ({
 		if (id !== null) {
 			openModal(
 				<div className='relative flex flex-col justify-center'>
-					<button className='p-2 text-left cursor-pointer'>Изменить</button>
+					<button className='cursor-pointer p-2 text-left'>Изменить</button>
 					<button
-						className='p-2 text-left cursor-pointer'
-						onClick={() => deleteTransaction(id)}
+						className='cursor-pointer p-2 text-left'
+						onClick={() => {
+							deleteTransaction(id, {
+								onSuccess: () => {
+									console.log('Удаление прошло успешно')
+									closeModal()
+								},
+								onError: err => {
+									console.error('Ошибка', err)
+								}
+							})
+						}}
 					>
 						Удалить
 					</button>
@@ -58,12 +68,12 @@ const TransactionDayBlock = ({
 	}
 
 	return (
-		<div className=' border-b border-gray-200 py-3'>
-			<div className='flex justify-between mb-2'>
-				<span className='text-base text-black font-semibold '>
+		<div className='border-b border-gray-200 py-3'>
+			<div className='mb-2 flex justify-between'>
+				<span className='text-base font-semibold text-black'>
 					{formatDate(date)}
 				</span>
-				<span className='text-base text-gray-300 font-medium'>
+				<span className='text-base font-medium text-gray-300'>
 					{formatCurrency(summAmount(transactions))}
 				</span>
 			</div>
@@ -71,7 +81,7 @@ const TransactionDayBlock = ({
 			<ul className='space-y-2'>
 				{transactions.map((transaction: TransactionModel) => (
 					<li
-						className='flex justify-between text-black text-base px-2 py-1 cursor-pointer bg-soft-white hover:brightness-96'
+						className='bg-soft-white flex cursor-pointer justify-between px-2 py-1 text-base text-black hover:brightness-96'
 						key={transaction.id}
 						onClick={() => {
 							handleClick(transaction.id)
@@ -82,7 +92,7 @@ const TransactionDayBlock = ({
 								? categoryMap.get(transaction.categoryId)
 								: 'без категории'}
 						</span>
-						<span className='font-medium text-right'>
+						<span className='text-right font-medium'>
 							{formatCurrency(transaction.amount)}
 						</span>
 					</li>

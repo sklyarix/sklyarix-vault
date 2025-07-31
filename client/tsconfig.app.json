@@ -4,6 +4,7 @@
     "paths": {
       "@models/*": ["../shared/models/*"],
       "@const/*": ["../shared/const/*"],
+      "@enums/*": ["../shared/enums/*"],
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",

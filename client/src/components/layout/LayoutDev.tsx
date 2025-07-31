@@ -11,18 +11,19 @@ const LayoutDev = () => {
 	console.log(import.meta.env.VITE_API_URL)
 
 	return (
-		<div
-			className='flex flex-col
-		min-h-screen overflow-hidden max-w-lg relative m-auto relative bg-soft-white'
-		>
+		<div className='bg-soft-white relative m-auto flex min-h-screen max-w-lg flex-col overflow-hidden'>
 			{isTg && webApp && user ? (
 				<>
 					<Header user={user} />
-					<main className='container overflow-y-auto absolute left-0 right-0 top-20 h-[calc(100vh-200px)] scrollbar-hidden'>
+					<main className='scrollbar-hidden absolute top-20 right-0 left-0 container h-[calc(100vh-200px)] overflow-y-auto'>
 						<Outlet />
 					</main>
 					<Footer />
 					<BottomModal />
+					
+					<Modal isOpen={isShowModal} onClose={handleClick}>
+						<div className='content'></div>
+					</Modal>
 				</>
 			) : (
 				<div>Это приложение работает только в TG 😢</div>
